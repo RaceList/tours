@@ -1,0 +1,11 @@
+*.pyc
+*.so
+*~
+.idea/
+upload/
+build
+dist/
+MANIFEST
+tornado.egg-info
+_auto2to3*
+.DS_Store
