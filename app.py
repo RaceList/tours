@@ -90,6 +90,7 @@ class IndexHandler(BaseHandler):
     route, pth = self.save_file()
     data = {
         'routeUUID': route.uuid,
+        'routeFilePTH': route.file
     }
     self.write(data)
 

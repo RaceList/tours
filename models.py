@@ -23,7 +23,10 @@ class Author(Base):
     routes = relationship("Route")
 
 
-class Route(Base):
+class ElevationMixin(object):
+    pass
+
+class Route(Base, ElevationMixin):
     __tablename__ = "route"
     id = Column(Integer, primary_key=True)
     author_id = Column(Integer, ForeignKey("author.id", ondelete="SET NULL"),
@@ -47,12 +50,12 @@ class Route(Base):
     fun_factor = Column(DECIMAL(10,2), default=0.0)
     track_description = Column(DECIMAL(10,2), default=0.0)
 
-    distance = Column(Integer)
+    distance = Column(DECIMAL)
     date = Column(DateTime(timezone=True), index=True)
     created = Column(DateTime(timezone=True), index=True)
     modified = Column(DateTime(timezone=True), index=True,
                       default=datetime.datetime.now())
-    elevation = Column(postgresql.ARRAY(Integer))
+    elevation = Column(postgresql.ARRAY(DECIMAL))
     file = Column(String(255))
 
 
