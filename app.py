@@ -1,5 +1,6 @@
 # Python imports
 import os
+import datetime
 
 # Tornado imports
 import tornado.auth
@@ -52,14 +53,13 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 __UPLOADS__ = 'upload/'
+
+
 class IndexHandler(BaseHandler):
   def get(self):
-    data = {
-        'form': forms.GeoUploadForm()
-    }
-    self.render('index.html', **data)
+    self.render('index.html', **{})
 
-  def post(self):
+  def save_file(self):
     route = models.Route()
     self.db.add(route)
     self.db.commit()
@@ -70,10 +70,28 @@ class IndexHandler(BaseHandler):
 
     #save original filename
     cname = route.uuid + extn
-    fh = open(__UPLOADS__ + cname, 'w')
+    date_pth = datetime.date.today().strftime("%Y/%m/%d/")
+    dir_pth = os.path.join(__UPLOADS__, date_pth)
+    if not os.path.exists(dir_pth):
+        os.makedirs(dir_pth)
+    pth = os.path.join(dir_pth, cname)
+
+    route.file = pth
+    self.db.add(route)
+    self.db.commit()
+
+    fh = open(pth, 'w')
     fh.write(fileinfo['body'])
     fh.close()
-    self.write('Hello')
+
+    return route, pth
+
+  def post(self):
+    route, pth = self.save_file()
+    data = {
+        'routeUUID': route.uuid,
+    }
+    self.write(data)
 
 
 def main():
