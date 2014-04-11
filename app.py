@@ -1,6 +1,7 @@
 # Python imports
 import os
 import datetime
+import json
 
 # Tornado imports
 import tornado.auth
@@ -20,6 +21,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 import forms
 import models
 import uimodules
+from gis.gpx import GPXParser
 
 # Options
 define("port", default=8888, help="run on the given port", type=int)
@@ -30,7 +32,8 @@ define("db_path", default='postgresql+psycopg2://rootart@localhost/route', type=
 class Application(tornado.web.Application):
   def __init__(self):
     handlers = [
-      url(r'/', IndexHandler, name='index')
+      url(r'/', IndexHandler, name='index'),
+      url(r'/api/routes/([^/]+)/', APIRouteDetailsHandler, name='api:details')
     ]
     settings = dict(
       debug=options.debug,
@@ -55,6 +58,16 @@ class BaseHandler(tornado.web.RequestHandler):
 __UPLOADS__ = 'upload/'
 
 
+class APIRouteDetailsHandler(BaseHandler):
+    def get(self, _uuid):
+        # query = self.db.query(models.Route).filter(models.Route.uuid == _uuid)
+        query = self.db.execute("select ST_AsGeoJSON(geom) from route where uuid = '%s'" % _uuid)
+        data = dict(query.fetchall()[0])
+        self.write(
+            data
+        )
+
+
 class IndexHandler(BaseHandler):
   def get(self):
     self.render('index.html', **{})
@@ -76,13 +89,17 @@ class IndexHandler(BaseHandler):
         os.makedirs(dir_pth)
     pth = os.path.join(dir_pth, cname)
 
-    route.file = pth
-    self.db.add(route)
-    self.db.commit()
-
     fh = open(pth, 'w')
     fh.write(fileinfo['body'])
     fh.close()
+    parser = GPXParser(pth)
+    route.geom = parser.to_multylinestring
+
+
+
+    route.file = pth
+    self.db.add(route)
+    self.db.commit()
 
     return route, pth
 
