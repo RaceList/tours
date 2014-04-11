@@ -20,7 +20,10 @@ require.config
         deps: ['jquery',]
 
 
-require ['jquery', 'backbone', 'underscore', 'views/homepageuploadview', 'dropzone'], ($, Backbone, _, HomePageUploadView, Dropzone)->
-  homePageUploadView = new HomePageUploadView()
+require ['jquery', 'backbone', 'underscore', 'dropzone', 'routers'], ($, Backbone, _, Dropzone, AppRouter)->
+
+  router = new AppRouter()
+  console.log router
+  Backbone.history.start()
 
   return

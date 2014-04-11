@@ -4,6 +4,9 @@ from .base import BaseParser
 
 
 class GPXParser(BaseParser):
+    '''
+
+    '''
     extensions = ['.gpx']
 
     def parse(self):

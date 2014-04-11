@@ -24,8 +24,9 @@
             return console.log(progress, bytesSent);
           },
           success: function(file, data) {
-            return console.log(data);
-          }
+            return window.location.href = '#/routes/' + data.routeUUID;
+          },
+          previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n<div class=\"dz-details\">\n  <div class=\"dz-filename\"><span data-dz-name></span></div>\n</div>\n<div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n<div class=\"dz-success-mark\"><span>✔</span></div>\n<div class=\"dz-error-mark\"><span>✘</span></div>\n<div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>"
         });
       };
 

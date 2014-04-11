@@ -27,9 +27,11 @@
     }
   });
 
-  require(['jquery', 'backbone', 'underscore', 'views/homepageuploadview', 'dropzone'], function($, Backbone, _, HomePageUploadView, Dropzone) {
-    var homePageUploadView;
-    homePageUploadView = new HomePageUploadView();
+  require(['jquery', 'backbone', 'underscore', 'dropzone', 'routers'], function($, Backbone, _, Dropzone, AppRouter) {
+    var router;
+    router = new AppRouter();
+    console.log(router);
+    Backbone.history.start();
   });
 
 }).call(this);

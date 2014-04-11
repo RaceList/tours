@@ -30,7 +30,7 @@ define("db_path", default='postgresql+psycopg2://rootart@localhost/route', type=
 class Application(tornado.web.Application):
   def __init__(self):
     handlers = [
-      url(r'/', IndexHandler, name='index'),
+      url(r'/', IndexHandler, name='index')
     ]
     settings = dict(
       debug=options.debug,
