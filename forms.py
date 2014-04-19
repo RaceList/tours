@@ -1,7 +1,7 @@
 from wtforms import *
-from wtforms.validators import *
 
 from util import MultiValueDict
+
 
 class BaseForm(Form):
     def __init__(self, handler=None, obj=None, prefix='', formdata=None, **kwargs):
