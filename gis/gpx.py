@@ -28,7 +28,7 @@ class GPXParser(BaseParser):
         for segment in self.segments:
             strings += '('
             strings += ','.join([
-                '{0} {1} '.format(x[0], x[1]) for x in segment
+                '{0} {1} '.format(x[1], x[0]) for x in segment
             ])
             strings += ')'
             segments_list.append(strings)

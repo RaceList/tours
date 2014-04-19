@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # Python imports
 import os
 import datetime
@@ -114,7 +115,7 @@ class IndexHandler(BaseHandler):
 def main():
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    http_server.listen(options.port, address=options.address)
     tornado.ioloop.IOLoop.instance().start()
 
 
