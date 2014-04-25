@@ -42,9 +42,10 @@ class Application(tornado.web.Application):
             ui_modules=uimodules,
         )
         tornado.web.Application.__init__(self, handlers, **settings)
-        db_path = 'postgresql+psycopg2://%(db_user)s@localhost/%(db_name)s' % {
+        db_path = 'postgresql+psycopg2://%(db_user)s@localhost:%(db_port)s/%(db_name)s' % {
             'db_user': options.db_user,
-            'db_name': options.db_name
+            'db_name': options.db_name,
+            'db_port': options.db_port,
         }
         engine = create_engine(db_path, convert_unicode=True, echo=options.debug)
         models.init_db(engine)

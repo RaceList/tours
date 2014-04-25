@@ -13,3 +13,4 @@ define('debug', default=True, type=bool)
 
 define('db_name', default='route', type=str)
 define('db_user', default='rootart', type=str)
+define('db_port', default='5432', type=str)
