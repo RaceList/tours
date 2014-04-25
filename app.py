@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # Python imports
 import os
 import datetime
@@ -10,7 +11,7 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 
-from tornado.options import define, options
+from tornado.options import options
 from tornado.web import url
 
 # Sqlalchemy imports
@@ -23,36 +24,38 @@ import models
 import uimodules
 from gis.gpx import GPXParser
 
-# Options
-define("port", default=8888, help="run on the given port", type=int)
-define("debug", default=False, type=bool)
-define("db_path", default='postgresql+psycopg2://rootart@localhost/route', type=str)
+import settings
 
 
 class Application(tornado.web.Application):
-  def __init__(self):
-    handlers = [
-      url(r'/', IndexHandler, name='index'),
-      url(r'/api/routes/([^/]+)/', APIRouteDetailsHandler, name='api:details')
-    ]
-    settings = dict(
-      debug=options.debug,
-      static_path=os.path.join(os.path.dirname(__file__), "static"),
-      template_path=os.path.join(os.path.dirname(__file__), 'templates'),
-      xsrf_cookies=False,
-      cookie_secret="zGy9csABfiWpdsjxG2zJNMauaZMDyq",
-      ui_modules=uimodules,
-    )
-    tornado.web.Application.__init__(self, handlers, **settings)
-    engine = create_engine(options.db_path, convert_unicode=True, echo=options.debug)
-    models.init_db(engine)
-    self.db = scoped_session(sessionmaker(bind=engine))
+    def __init__(self):
+        handlers = [
+            url(r'/', IndexHandler, name='index'),
+            url(r'/api/routes/([^/]+)/', APIRouteDetailsHandler, name='api:details')
+        ]
+        settings = dict(
+            debug=options.debug,
+            static_path=os.path.join(os.path.dirname(__file__), "static"),
+            template_path=os.path.join(os.path.dirname(__file__), 'templates'),
+            xsrf_cookies=False,
+            cookie_secret="zGy9csABfiWpdsjxG2zJNMauaZMDyq",
+            ui_modules=uimodules,
+        )
+        tornado.web.Application.__init__(self, handlers, **settings)
+        db_path = 'postgresql+psycopg2://%(db_user)s@localhost:%(db_port)s/%(db_name)s' % {
+            'db_user': options.db_user,
+            'db_name': options.db_name,
+            'db_port': options.db_port,
+        }
+        engine = create_engine(db_path, convert_unicode=True, echo=options.debug)
+        models.init_db(engine)
+        self.db = scoped_session(sessionmaker(bind=engine))
 
 
 class BaseHandler(tornado.web.RequestHandler):
-  @property
-  def db(self):
-    return self.application.db
+    @property
+    def db(self):
+        return self.application.db
 
 
 __UPLOADS__ = 'upload/'
@@ -69,54 +72,53 @@ class APIRouteDetailsHandler(BaseHandler):
 
 
 class IndexHandler(BaseHandler):
-  def get(self):
-    self.render('index.html', **{})
+    def get(self):
+        self.render('index.html', **{})
 
-  def save_file(self):
-    route = models.Route()
-    self.db.add(route)
-    self.db.commit()
+    def save_file(self):
+        route = models.Route()
+        self.db.add(route)
+        self.db.commit()
 
-    fileinfo = self.request.files['geom'][0]
-    fname = fileinfo['filename']
-    extn = os.path.splitext(fname)[1]
+        fileinfo = self.request.files['geom'][0]
+        fname = fileinfo['filename']
+        extn = os.path.splitext(fname)[1]
 
-    #save original filename
-    cname = route.uuid + extn
-    date_pth = datetime.date.today().strftime("%Y/%m/%d/")
-    dir_pth = os.path.join(__UPLOADS__, date_pth)
-    if not os.path.exists(dir_pth):
-        os.makedirs(dir_pth)
-    pth = os.path.join(dir_pth, cname)
+        #save original filename
+        cname = route.uuid + extn
+        date_pth = datetime.date.today().strftime("%Y/%m/%d/")
+        dir_pth = os.path.join(__UPLOADS__, date_pth)
+        if not os.path.exists(dir_pth):
+            os.makedirs(dir_pth)
+        pth = os.path.join(dir_pth, cname)
 
-    fh = open(pth, 'w')
-    fh.write(fileinfo['body'])
-    fh.close()
-    parser = GPXParser(pth)
-    route.geom = parser.to_multylinestring
+        fh = open(pth, 'w')
+        fh.write(fileinfo['body'])
+        fh.close()
+        parser = GPXParser(pth)
+        route.geom = parser.to_multylinestring
 
+        route.file = pth
+        self.db.add(route)
+        self.db.commit()
 
+        return route, pth
 
-    route.file = pth
-    self.db.add(route)
-    self.db.commit()
-
-    return route, pth
-
-  def post(self):
-    route, pth = self.save_file()
-    data = {
-        'routeUUID': route.uuid,
-        'routeFilePTH': route.file
-    }
-    self.write(data)
+    def post(self):
+        route, pth = self.save_file()
+        data = {
+            'routeUUID': route.uuid,
+            'routeFilePTH': route.file
+        }
+        self.write(data)
 
 
 def main():
-  tornado.options.parse_command_line()
-  http_server = tornado.httpserver.HTTPServer(Application())
-  http_server.listen(options.port)
-  tornado.ioloop.IOLoop.instance().start()
+    tornado.options.parse_command_line()
+    http_server = tornado.httpserver.HTTPServer(Application())
+    http_server.listen(options.port, address=options.address)
+    tornado.ioloop.IOLoop.instance().start()
+
 
 if __name__ == '__main__':
-  main()
+    main()

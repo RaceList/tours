@@ -1,6 +1,7 @@
 class UnexpectedParsingError(Exception):
     pass
 
+
 class BaseParser(object):
     extensions = []
 

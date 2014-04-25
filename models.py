@@ -1,10 +1,9 @@
 import datetime
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 from sqlalchemy import (Column, Integer, String, DateTime,
-                        Boolean, Text, DECIMAL, ForeignKey)
-from sqlalchemy.orm import (scoped_session, sessionmaker,
-                            relationship, backref)
+                        DECIMAL, ForeignKey)
+from sqlalchemy.orm import (relationship)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
 from geoalchemy2 import Geometry
@@ -12,8 +11,9 @@ from geoalchemy2 import Geometry
 
 Base = declarative_base()
 
+
 def init_db(engine):
-  Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
 
 class Author(Base):
@@ -25,6 +25,7 @@ class Author(Base):
 
 class ElevationMixin(object):
     pass
+
 
 class Route(Base, ElevationMixin):
     __tablename__ = "route"
@@ -41,14 +42,14 @@ class Route(Base, ElevationMixin):
     description = Column(String)
 
     # AVG metrics
-    difficulty = Column(DECIMAL(10,2), default=0.0)
-    ground = Column(DECIMAL(10,2), default=0.0)
-    air = Column(DECIMAL(10,2), default=0.0)
-    landscape = Column(DECIMAL(10,2), default=0.0)
-    condition = Column(DECIMAL(10,2), default=0.0)
-    technique = Column(DECIMAL(10,2), default=0.0)
-    fun_factor = Column(DECIMAL(10,2), default=0.0)
-    track_description = Column(DECIMAL(10,2), default=0.0)
+    difficulty = Column(DECIMAL(10, 2), default=0.0)
+    ground = Column(DECIMAL(10, 2), default=0.0)
+    air = Column(DECIMAL(10, 2), default=0.0)
+    landscape = Column(DECIMAL(10, 2), default=0.0)
+    condition = Column(DECIMAL(10, 2), default=0.0)
+    technique = Column(DECIMAL(10, 2), default=0.0)
+    fun_factor = Column(DECIMAL(10, 2), default=0.0)
+    track_description = Column(DECIMAL(10, 2), default=0.0)
 
     distance = Column(DECIMAL)
     date = Column(DateTime(timezone=True), index=True)
@@ -57,5 +58,3 @@ class Route(Base, ElevationMixin):
                       default=datetime.datetime.now())
     elevation = Column(postgresql.ARRAY(DECIMAL))
     file = Column(String(255))
-
-
