@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(['backbone', 'underscore', 'jquery', 'views/homepageuploadview'], function(Backbone, _, $, HomePageUploadView) {
+  define(['backbone', 'underscore', 'jquery', 'views/homepageuploadview', 'views/routeMapDetailsView', 'models/routeModel'], function(Backbone, _, $, HomePageUploadView, RouteMapDetailView, RouteModel) {
     var AppRouter, _ref;
     AppRouter = (function(_super) {
       __extends(AppRouter, _super);
@@ -19,12 +19,27 @@
       };
 
       AppRouter.prototype.showRouteDetails = function() {
+        var model, _ref1, _ref2;
         console.log('details');
+        if ((_ref1 = window.homePageUploadView) != null) {
+          _ref1.remove();
+        }
+        if ((_ref2 = $('.file-upload-block')) != null) {
+          _ref2.remove();
+        }
+        console.log('Loading RouteMapDetailView');
+        model = new RouteModel();
+        model.fetch({
+          async: false
+        });
+        console.log(model);
+        window.routeMapDetailsView = new RouteMapDetailView({
+          model: model
+        });
       };
 
       AppRouter.prototype.defaultAction = function() {
-        var homePageUploadView;
-        homePageUploadView = new HomePageUploadView();
+        window.homePageUploadView = new HomePageUploadView();
       };
 
       return AppRouter;

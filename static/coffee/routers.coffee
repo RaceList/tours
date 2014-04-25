@@ -1,4 +1,4 @@
-define ['backbone', 'underscore', 'jquery', 'views/homepageuploadview'], (Backbone, _, $, HomePageUploadView)->
+define ['backbone', 'underscore', 'jquery', 'views/homepageuploadview', 'views/routeMapDetailsView', 'models/routeModel'], (Backbone, _, $, HomePageUploadView, RouteMapDetailView, RouteModel)->
   class AppRouter extends Backbone.Router
 
     routes:
@@ -7,10 +7,20 @@ define ['backbone', 'underscore', 'jquery', 'views/homepageuploadview'], (Backbo
 
     showRouteDetails: ()->
       console.log 'details'
+      window.homePageUploadView?.remove()
+      $('.file-upload-block')?.remove()
+      console.log 'Loading RouteMapDetailView'
+      model = new RouteModel()
+      model.fetch
+        async: false
+      console.log model
+      window.routeMapDetailsView = new RouteMapDetailView
+        model: model
+
       return
 
     defaultAction: ()->
-      homePageUploadView = new HomePageUploadView()
+      window.homePageUploadView = new HomePageUploadView()
       return
 
   return AppRouter

@@ -64,7 +64,7 @@ __UPLOADS__ = 'upload/'
 class APIRouteDetailsHandler(BaseHandler):
     def get(self, _uuid):
         # query = self.db.query(models.Route).filter(models.Route.uuid == _uuid)
-        query = self.db.execute("select ST_AsGeoJSON(geom) from route where uuid = '%s'" % _uuid)
+        query = self.db.execute("select ST_AsGeoJSON(geom)::json from route where uuid = '%s'" % _uuid)
         data = dict(query.fetchall()[0])
         self.write(
             data

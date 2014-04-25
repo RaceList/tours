@@ -7,6 +7,7 @@ require.config
     select2: 'vendor/select2'
     text: 'vendor/text'
     dropzone: 'vendor/dropzone/dropzone-amd-module'
+    leaflet: 'vendor/leaflet'
 
   shim:
     backbone:
@@ -20,7 +21,7 @@ require.config
         deps: ['jquery',]
 
 
-require ['jquery', 'backbone', 'underscore', 'dropzone', 'routers'], ($, Backbone, _, Dropzone, AppRouter)->
+require ['jquery', 'backbone', 'underscore', 'dropzone', 'routers', 'leaflet'], ($, Backbone, _, Dropzone, AppRouter)->
 
   router = new AppRouter()
   console.log router

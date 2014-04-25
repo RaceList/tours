@@ -8,7 +8,8 @@
       csrf: 'vendor/csrf',
       select2: 'vendor/select2',
       text: 'vendor/text',
-      dropzone: 'vendor/dropzone/dropzone-amd-module'
+      dropzone: 'vendor/dropzone/dropzone-amd-module',
+      leaflet: 'vendor/leaflet'
     },
     shim: {
       backbone: {
@@ -27,7 +28,7 @@
     }
   });
 
-  require(['jquery', 'backbone', 'underscore', 'dropzone', 'routers'], function($, Backbone, _, Dropzone, AppRouter) {
+  require(['jquery', 'backbone', 'underscore', 'dropzone', 'routers', 'leaflet'], function($, Backbone, _, Dropzone, AppRouter) {
     var router;
     router = new AppRouter();
     console.log(router);
