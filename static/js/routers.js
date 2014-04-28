@@ -18,7 +18,7 @@
         '*actions': 'defaultAction'
       };
 
-      AppRouter.prototype.showRouteDetails = function() {
+      AppRouter.prototype.showRouteDetails = function(uuid) {
         var model, _ref1, _ref2;
         console.log('details');
         if ((_ref1 = window.homePageUploadView) != null) {
@@ -28,7 +28,9 @@
           _ref2.remove();
         }
         console.log('Loading RouteMapDetailView');
-        model = new RouteModel();
+        model = new RouteModel({
+          uuid: uuid
+        });
         model.fetch({
           async: false
         });

@@ -1,6 +1,10 @@
 define ['backbone', 'underscore', 'jquery'], (Backbone, _, $)->
   class RouteModel extends Backbone.Model
-    url: '/api/routes/d0112c1e-0778-4fb1-9d8f-b47696bc794b/'
+    initialize: (options)->
+      @.uuid = options.uuid
+
+    url: ()->
+      '/api/routes/'+ @.uuid + '/'
     defaults:
       title: ''
       description: ''

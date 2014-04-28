@@ -5,12 +5,13 @@ define ['backbone', 'underscore', 'jquery', 'views/homepageuploadview', 'views/r
       'routes/:routeUUID': 'showRouteDetails'
       '*actions': 'defaultAction'
 
-    showRouteDetails: ()->
+    showRouteDetails: (uuid)->
       console.log 'details'
       window.homePageUploadView?.remove()
       $('.file-upload-block')?.remove()
       console.log 'Loading RouteMapDetailView'
-      model = new RouteModel()
+      model = new RouteModel
+        uuid: uuid
       model.fetch
         async: false
       console.log model

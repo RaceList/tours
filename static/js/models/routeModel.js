@@ -13,7 +13,13 @@
         return _ref;
       }
 
-      RouteModel.prototype.url = '/api/routes/d0112c1e-0778-4fb1-9d8f-b47696bc794b/';
+      RouteModel.prototype.initialize = function(options) {
+        return this.uuid = options.uuid;
+      };
+
+      RouteModel.prototype.url = function() {
+        return '/api/routes/' + this.uuid + '/';
+      };
 
       RouteModel.prototype.defaults = {
         title: '',
